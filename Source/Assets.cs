@@ -170,32 +170,22 @@ namespace PathLibrary
 		
 		public bool Remove( NetworkAsset network )
 		{
-			NetworkAsset[] newNetworks;
-			bool found;
-			
-			newNetworks = new NetworkAsset[ networks.Length - 1 ];
-			found = false;
-			
-			for( int i = 0; i < newNetworks.Length; i++ )
+			bool found = false;
+			int index = System.Array.IndexOf(networks, network);
+			if (index != -1)
 			{
-				if( networks[ i ] == network )
+				NetworkAsset[] newNetworks = new NetworkAsset[ networks.Length - 1 ];
+				if (newNetworks.Length > 0)
 				{
-					found = true;
+					System.Array.ConstrainedCopy(networks, 0, newNetworks, 0, index);
+					int length = networks.Length-index-1;
+					if (length > 0)
+						System.Array.ConstrainedCopy(networks, index+1, newNetworks, index, length);
 				}
-
-				newNetworks[ i ] = networks[ i + ( ( found ) ? 1 : 0 ) ];
+				networks = newNetworks;
+				found = true;
 			}
-			
-			found = ( networks[ newNetworks.Length ] == network ) ? true : found;
-			
-			if( !found )
-			{
-				return false;
-			}
-			
-			networks = newNetworks;
-
-			return true;
+			return found;
 		}
 		
 		
