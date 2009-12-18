@@ -85,6 +85,7 @@ namespace PathLibrary
 			Texture2D texture;
 		
 			texture = new Texture2D( 4, 4 );
+			texture.hideFlags = HideFlags.HideAndDontSave;
 			texture.LoadImage( GetByteResource( resourceName, assembly ) );
 			
 			return texture;
