@@ -406,7 +406,7 @@ namespace PathLibrary
 		{
 			Hashtable closedSet = new Hashtable();
 			Hashtable openSet = new Hashtable();
-			ArrayList openSetValues = new ArrayList();
+//			ArrayList openSetValues = new ArrayList();
 			PathData currentPath = null;
 			float endTime;
 			
@@ -422,9 +422,19 @@ namespace PathLibrary
 			
 			while( seeking && openSet.Count > 0 )
 			{
-				openSetValues = new ArrayList( openSet.Values );
-				openSetValues.Sort();
-				currentPath = ( PathData )openSetValues[ 0 ];
+//				openSetValues = new ArrayList( openSet.Values );
+//				openSetValues.Sort();
+//				currentPath = ( PathData )openSetValues[ 0 ];
+				PathData lowestValue = null;
+				IEnumerator e = openSet.Values.GetEnumerator();
+				e.MoveNext();
+				lowestValue = (PathData)e.Current;
+				while(e.MoveNext()) {
+					PathData p = (PathData)e.Current;
+					if(p.CompareTo(lowestValue) < 0)
+						lowestValue = p;
+				}
+				currentPath = lowestValue;
 				
 				if( currentPath.Destination == End )
 				{
