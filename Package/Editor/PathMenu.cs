@@ -21,7 +21,7 @@ public class PathMenu : ScriptableObject
 		asset.Data = ( new CollectionAsset() ).GetData();
 		AssetDatabase.CreateAsset( asset, "Assets/" + name + nameIdx + ".asset" );
 		
-		EditorUtility.FocusProjectView();
+		EditorUtility.FocusProjectWindow();
 		Selection.activeObject = asset;
 		
 		EditCollection();

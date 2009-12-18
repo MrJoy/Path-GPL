@@ -48,7 +48,7 @@ public class PathComponentEditor : UnityEditor.Editor, IInspector
 	}
 	
 	
-	public void OnInspectorGUI()
+	public override void OnInspectorGUI()
 	{
 		PathControl control;
 		string[] selector;
