@@ -146,6 +146,9 @@ namespace PathLibrary
 		
 		
 		private Texture2D[] tagsToggle = null;
+		private bool useSlopeChecking = false;
+		private float threshold = 0f;
+		private Vector2 heightRange = new Vector2(0f, 600f);
 		public void OnNetworkGUI( IInspector inspector )
 		{
 			Vector3 newPosition, newSize;
@@ -242,17 +245,20 @@ namespace PathLibrary
 									if( GUILayout.Button( "Autosize" ) )
 									{
 										Bounds b = meshReference.bounds;
-										Editor.Instance.SelectedNetwork.Position = b.center;
-										Editor.Instance.SelectedNetwork.Size = b.size;
+										Editor.Instance.SelectedNetwork.Position = new Vector3(b.center.x, 0f, b.center.z);
+										Editor.Instance.SelectedNetwork.Size = b.size + (Vector3.up * b.center.y);
 										Editor.Instance.SaveCollection();
 									}
 									if( GUILayout.Button( "Build" ) && ( Editor.Instance.SelectedNetwork.Nodes.Length == 0 || EditorUtility.DisplayDialog( "Rebuild?", "Are you certain that you wish to rebuild the navmesh '" + Editor.Instance.SelectedNetwork.ToString() + "'?\n\nWARNING: All current data in the navmesh will be lost. This cannot be undone.", "Rebuild", "Cancel" ) ) )
 									{
-										( ( NavmeshAsset )Editor.Instance.SelectedNetwork ).Generate( meshReference );
+										( ( NavmeshAsset )Editor.Instance.SelectedNetwork ).Generate( meshReference, useSlopeChecking, threshold, heightRange );
 										Editor.Instance.SaveCollection();
 									}
 								}
 							GUILayout.EndHorizontal();
+							useSlopeChecking = EditorGUILayout.Toggle("Skip steep faces?", useSlopeChecking);
+							threshold = Mathf.Clamp01(EditorGUILayout.FloatField("Threshold", threshold));
+							heightRange = EditorGUILayout.Vector2Field("Walkable Height", heightRange);
 						}
 						else if( Editor.Instance.SelectedNetwork is GridNetworkAsset )
 						{

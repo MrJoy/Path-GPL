@@ -26,6 +26,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -153,35 +154,53 @@ namespace PathLibrary {
 			return true;
 		}
 
-		
-		
-		public bool Generate( Mesh mesh )
+		public bool Generate( Mesh mesh, bool useSlopeChecking, float threshold, Vector2 heightRange )
 		{
 			Vector3[] points;
 			Vector3 position, vector;
 			TriangleAsset[] triangles;
 			
-			cells = new CellAsset[ mesh.triangles.Length / 3 ];
+//			cells = new CellAsset[ mesh.triangles.Length / 3 ];
+			List<CellAsset> tmpCells = new List<CellAsset>(mesh.triangles.Length / 3);
 			
 			for( int i = 0, cellID = 0; i < mesh.triangles.Length; i += 3, cellID++ )
 			{
-				triangles = new TriangleAsset[ 1 ];
 				points = new Vector3[ 3 ];
-				
+			
 				points[ 0 ] = mesh.vertices[ mesh.triangles[ i ] ];
 				points[ 1 ] = mesh.vertices[ mesh.triangles[ i + 1 ] ];
 				points[ 2 ] = mesh.vertices[ mesh.triangles[ i + 2 ] ];
+				Vector3 normal;
+				bool isSafeToProceed = true;
+				if(useSlopeChecking) {
+					normal = Vector3.Cross(points[1] - points[0], points[2] - points[1]).normalized;
+					float dp = Vector3.Dot(normal, Vector3.up);
+					if(dp < threshold)
+						isSafeToProceed = false;
+					else {
+						for(int j = 0; j < 3; j++) {
+							if((points[j].y < heightRange.x) || (points[j].y > heightRange.y))
+								isSafeToProceed = false;
+						}
+					}
+				}
+				if(isSafeToProceed) {
+					triangles = new TriangleAsset[ 1 ];
 				
-				vector = points[ 0 ] - points[ 1 ];
-				position = points[ 1 ] + vector.normalized * vector.magnitude / 2;
+					vector = points[ 0 ] - points[ 1 ];
+					position = points[ 1 ] + vector.normalized * vector.magnitude / 2;
 
-				vector = points[ 2 ] - position;
-				position = position + vector.normalized * vector.magnitude / 2;
+					vector = points[ 2 ] - position;
+					position = position + vector.normalized * vector.magnitude / 2;
 					
-				triangles[ 0 ] = new TriangleAsset( points, null );
+					triangles[ 0 ] = new TriangleAsset( points, null );
 				
-				cells[ cellID ] = new CellAsset( "Cell " + cellID, position, triangles, this, Collection );
+					tmpCells.Add(new CellAsset( "Cell " + cellID, position, triangles, this, Collection ));
+				} else {
+					Debug.Log("Discarding cell #" + cellID);
+				}
 			}
+			cells = tmpCells.ToArray();
 			
 			return GenerateConnections();
 		}

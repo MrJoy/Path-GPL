@@ -26,6 +26,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace PathLibrary
 {
@@ -34,7 +35,7 @@ namespace PathLibrary
 		private class CachedSeeker
 		{
 			private NetworkNodeAsset start, end;
-			private ArrayList solution;
+			private List<ConnectionAsset> solution;
 			
 			private float lifespan, endTime;
 			
@@ -44,7 +45,8 @@ namespace PathLibrary
 			{
 				this.start = seeker.Start;
 				this.end = seeker.End;
-				this.solution = new ArrayList( seeker.Solution );
+				// TODO: Do we NEED to copy this?
+				this.solution = new List<ConnectionAsset>( seeker.Solution );
 				
 				Restart( seeker.CacheLifespan );
 			}
@@ -58,7 +60,7 @@ namespace PathLibrary
 			
 			
 			
-			public ArrayList Solution
+			public List<ConnectionAsset> Solution
 			{
 				get
 				{
@@ -93,13 +95,15 @@ namespace PathLibrary
 					return true;
 				}
 				
-				foreach( ConnectionAsset connection in Solution )
-				{
-					if( connection.From.Network == network )
-					{
-						return true;
-					}
+				for(int i = 0; i < Solution.Count; i++) {
+					if(Solution[i].From.Network == network) return true;
 				}
+				
+/*				PathData current = Solution;
+				while(current != null) {
+					if(current.Connection.From.Network == network) return true;
+					current = current.Next;
+				} */
 				
 				return false;
 			}
@@ -113,13 +117,16 @@ namespace PathLibrary
 					return true;
 				}
 				
-				foreach( ConnectionAsset connection in Solution )
-				{
-					if( connection.From == node )
-					{
-						return true;
-					}
+				for(int i = 0; i < Solution.Count; i++) {
+					if(Solution[i].From == node) return true;
 				}
+				
+				
+/*				PathData current = Solution;
+				while(current != null) {
+					if(current.Connection.From == node) return true;
+					current = current.Next;
+				} */
 				
 				return false;
 			}
@@ -128,13 +135,15 @@ namespace PathLibrary
 			
 			public bool DoesUse( ConnectionAsset connection )
 			{
-				foreach( ConnectionAsset connectionAsset in Solution )
-				{
-					if( connectionAsset == connection )
-					{
-						return true;
-					}
+				for(int i = 0; i < Solution.Count; i++) {
+					if(Solution[i] == connection) return true;
 				}
+
+/*				PathData current = Solution;
+				while(current != null) {
+					if(current.Connection == connection) return true;
+					current = current.Next;
+				} */
 				
 				return false;
 			}
@@ -255,8 +264,9 @@ namespace PathLibrary
 		
 		
 		
-		public ArrayList GetCache( Seeker seeker )
+		public List<ConnectionAsset> GetCache( Seeker seeker )
 		{
+			// TODO: Make this an O(1) lookup?
 			foreach( CachedSeeker cache in cachedSeekers )
 			{
 				if( cache.Match( seeker ) )
@@ -385,22 +395,23 @@ namespace PathLibrary
 		
 		
 		
+		// TODO: Is caching this safe?
+		private ArrayList gridNetworks = null;
 		public ArrayList GridNetworks
 		{
 			get
 			{
-				ArrayList gridNetworks;
+				if(gridNetworks == null) {
+					gridNetworks = new ArrayList();
 				
-				gridNetworks = new ArrayList();
-				
-				foreach( NetworkAsset network in networks )
-				{
-					if( network is GridNetworkAsset )
+					for( int i = 0; i < networks.Count; i++ )
 					{
-						gridNetworks.Add( network );
+						if( networks[i] is GridNetworkAsset )
+						{
+							gridNetworks.Add( networks[i] );
+						}
 					}
 				}
-				
 				return gridNetworks;
 			}
 		}
@@ -409,11 +420,11 @@ namespace PathLibrary
 		
 		public NetworkAsset GetNetwork( string name )
 		{
-			foreach( NetworkAsset network in networks )
+			for( int i = 0; i < networks.Count; i++ )
 			{
-				if( network.Name == name )
+				if( ((NetworkAsset)networks[i]).Name == name )
 				{
-					return network;
+					return (NetworkAsset)networks[i];
 				}
 			}
 			
@@ -422,23 +433,24 @@ namespace PathLibrary
 		
 		
 		
+		private ArrayList gridNodes = null;
 		public ArrayList GetGridNodes( NetworkNodeAsset node )
 		{
-			ArrayList result;
-			
-			result = new ArrayList();
-			foreach( GridNetworkAsset network in GridNetworks )
-			{
-				foreach( GridNodeAsset gridNode in network.Nodes )
+			// TODO: Is caching this safe, or should we be clearing and starting over?
+			if(gridNodes == null) {
+				gridNodes = new ArrayList();
+				ArrayList gridNets = GridNetworks;
+				for(int i = 0; i < gridNets.Count; i++)
 				{
-					if( gridNode.Target == node )
+					GridNetworkAsset network = (GridNetworkAsset)gridNets[i];
+					for(int j = 0; j < network.Nodes.Length; j++)
 					{
-						result.Add( gridNode );
+						GridNodeAsset gridNode = (GridNodeAsset)network.Nodes[j];
+						if(gridNode.Target == node) gridNodes.Add(gridNode);
 					}
 				}
 			}
-			
-			return result;
+			return gridNodes;
 		}
 		
 		
@@ -638,23 +650,28 @@ namespace PathLibrary
 		}
 		
 		
-		
+//		private static int count = 0;
+		private Dictionary <NetworkAsset,Bounds> networkBoundsCache = new Dictionary <NetworkAsset,Bounds>();
 		public NetworkNodeAsset NearestNode( Vector3 position, Seeker seeker )
 		{
+//			count++;
+//			Debug.Log("NearestNode: " + count);
 			NetworkNodeAsset nearest;
-			Bounds networkBounds;
+//			Bounds networkBounds;
 			
 			nearest = null;
-			foreach( NetworkAsset network in networks )
+			for( int i = 0; i < networks.Count; i++ )
 			{
+				NetworkAsset network = (NetworkAsset)networks[i];
 				if( network is GridNetworkAsset || !network.Enabled || ( seeker.ValidateNetworks && !seeker.Valid( network ) ) )
 				// Reject disabled networks and invalid ones if we're checking for that
 				{
 					continue;
 				}
 				
-				networkBounds = new Bounds( network.Position + Owner.transform.position, network.Size );
-				if( !networkBounds.Contains( position ) )
+				if(!networkBoundsCache.ContainsKey(network))
+					networkBoundsCache[network] = new Bounds( network.Position + Owner.transform.position, network.Size );
+				if( !networkBoundsCache[network].Contains( position ) )
 				// Reject networks whose bounds do not contain the point
 				{
 					continue;
