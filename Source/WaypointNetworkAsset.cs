@@ -43,10 +43,8 @@ namespace PathLibrary {
 		
 		public WaypointNetworkAsset( string name, CollectionAsset collection ) : base( name, collection )
 		{
-			waypoints = new WaypointAsset[ 0 ];
+			Clear();
 		}
-		
-	
 		
 		public WaypointNetworkAsset( WaypointNetworkAsset original ) : base( original.Name, original.Collection )
 		{
@@ -123,7 +121,14 @@ namespace PathLibrary {
 			return null;
 		}
 		
-		
+
+		/// <summary>
+		/// Removes all network waypoints
+		/// </summary>
+		public void Clear()
+		{
+			waypoints = new WaypointAsset[ 0 ];
+		}
 		
 		public WaypointAsset Add( WaypointAsset waypoint )
 		{
