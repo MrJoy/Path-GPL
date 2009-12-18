@@ -92,7 +92,6 @@ namespace PathLibrary
 		}
 		
 		private static void Spacer() {
-//			GUILayout.Space( 30.0f );
 			EditorGUILayout.Separator();
 		}
 
@@ -340,7 +339,8 @@ namespace PathLibrary
 								newVector3 = EditorGUILayout.Vector3Field( "Position", ( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position );
 								if( ( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position != newVector3 )
 								{
-									 Editor.Instance.SaveCollection();
+									( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position = newVector3;
+									Editor.Instance.SaveCollection();
 								}
 					
 								/*
