@@ -404,8 +404,9 @@ namespace PathLibrary
 		
 		private IEnumerator DoSeek()
 		{
-			ArrayList closedSet = new ArrayList(), openSetValues = new ArrayList();
+			Hashtable closedSet = new Hashtable();
 			Hashtable openSet = new Hashtable();
+			ArrayList openSetValues = new ArrayList();
 			PathData currentPath = null;
 			float endTime;
 			
@@ -432,11 +433,11 @@ namespace PathLibrary
 				}
 				
 				openSet.Remove( currentPath.Connection );
-				closedSet.Add( currentPath.Connection );
+				closedSet[ currentPath.Connection ] = 1;
 				
 				foreach( ConnectionAsset connection in currentPath.Connections )
 				{
-					if( closedSet.Contains( connection ) || !ValidConnection( connection ) )
+					if( closedSet.ContainsKey( connection ) || !ValidConnection( connection ) )
 					{
 						continue;
 					}
