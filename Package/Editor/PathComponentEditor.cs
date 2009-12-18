@@ -48,14 +48,11 @@ public class PathComponentEditor : UnityEditor.Editor, IInspector
 	}
 	
 	
+	private static string[] selector = new string[] { "Always", "Selected" };
 	public override void OnInspectorGUI()
 	{
+		EditorGUIUtility.LookLikeControls();
 		PathControl control;
-		string[] selector;
-		
-		selector = new string[ 2 ];
-		selector[ 0 ] = "Always";
-		selector[ 1 ] = "When selected";
 		
 		control = target as PathControl;
 		
@@ -69,7 +66,9 @@ public class PathComponentEditor : UnityEditor.Editor, IInspector
 		GUILayout.EndHorizontal();
 		
 		// Standard marker size
-		control.standardMarkerSize = EditorGUILayout.FloatField( "Marker size", control.standardMarkerSize );
+		GUILayout.BeginHorizontal( GUILayout.Width( PathLibrary.Resources.DefaultLeftColumnWidth ) );
+			control.standardMarkerSize = EditorGUILayout.FloatField( "Marker size", control.standardMarkerSize );
+		GUILayout.EndHorizontal();
 		
 		// Collection
 		control.pathAsset = EditorGUILayout.ObjectField( "Collection", control.pathAsset, typeof( PathAsset ) );
