@@ -29,6 +29,7 @@ public class PathEditor : ScriptableObject, IEditorWindow
 		}
 		
 		instance = this;
+		hideFlags = HideFlags.HideAndDontSave;
 	}
 	
 	

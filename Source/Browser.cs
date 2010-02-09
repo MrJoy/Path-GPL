@@ -400,7 +400,7 @@ namespace PathLibrary
 					// The network browser toolbar
 					{
 						// Create menu //
-						if( GUILayout.Button( "Create", Resources.ToolbarPullDownUpStyle ) )
+						if( GUILayout.Button( "Create", "ToolbarButton" /*, Resources.ToolbarPullDownUpStyle */ ) )
 						{
 							EditorUtility.DisplayPopupMenu( new Rect( GUILayoutUtility.GetLastRect().x + 5, GUILayoutUtility.GetLastRect().y + 8, 0, 0 ), "Assets/Path/Create/", null );
 						}

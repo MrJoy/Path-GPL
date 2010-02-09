@@ -42,23 +42,19 @@ namespace PathLibrary
 	
 	public class Inspector
 	{
-        private static Inspector instance;
+		private static Inspector instance;
 
-
-        
-        public static Inspector Instance
-        {
-            get
-            {
+		public static Inspector Instance
+		{
+			get
+			{
 				if( instance == null )
 				{
 					new Inspector();
 				}
-                return instance;
-            }
-        }
-
-
+				return instance;
+			}
+		}
 
 		private bool showNetwork, showNode, showConnection, networkTags, nodeTags, connectionTags, bidirectionalConnect;
 		private Mesh meshReference;
@@ -95,7 +91,9 @@ namespace PathLibrary
 			instance = this;
 		}
 		
-
+		private static void Spacer() {
+			EditorGUILayout.Separator();
+		}
 
 		public void OnGUI( IInspector inspector )
 		{
@@ -120,7 +118,7 @@ namespace PathLibrary
 				}
 				else
 				{
-					GUILayout.Space( 30.0f );
+					Spacer();
 					GUILayout.BeginHorizontal();
 						GUILayout.FlexibleSpace();
 						GUILayout.Label( "No PathBrowser selection." );
@@ -134,7 +132,7 @@ namespace PathLibrary
 				}
 			}
 
-			GUILayout.Space( 30.0f );
+			Spacer();
 
 			GUILayout.BeginHorizontal();
 				GUILayout.FlexibleSpace();
@@ -147,16 +145,18 @@ namespace PathLibrary
 		}
 		
 		
-		
+		private Texture2D[] tagsToggle = null;
 		public void OnNetworkGUI( IInspector inspector )
 		{
 			Vector3 newPosition, newSize;
-			Texture2D[] tagsToggle = new Texture2D[ 2 ];
+			if( tagsToggle == null )
+			{
+				tagsToggle = new Texture2D[ 2 ];
+			}
 			
 			tagsToggle[ 1 ] = Resources.Tag;
 			
-			GUILayout.Space( 30.0f );
-			
+			EditorGUILayout.Separator();
 			GUILayout.BeginHorizontal();
 				GUILayout.Space( 15.0f );
 				
@@ -239,6 +239,13 @@ namespace PathLibrary
 				
 								if( meshReference != null )
 								{
+									if( GUILayout.Button( "Autosize" ) )
+									{
+										Bounds b = meshReference.bounds;
+										Editor.Instance.SelectedNetwork.Position = b.center;
+										Editor.Instance.SelectedNetwork.Size = b.size;
+										Editor.Instance.SaveCollection();
+									}
 									if( GUILayout.Button( "Build" ) && ( Editor.Instance.SelectedNetwork.Nodes.Length == 0 || EditorUtility.DisplayDialog( "Rebuild?", "Are you certain that you wish to rebuild the navmesh '" + Editor.Instance.SelectedNetwork.ToString() + "'?\n\nWARNING: All current data in the navmesh will be lost. This cannot be undone.", "Rebuild", "Cancel" ) ) )
 									{
 										( ( NavmeshAsset )Editor.Instance.SelectedNetwork ).Generate( meshReference );
@@ -289,7 +296,7 @@ namespace PathLibrary
 			tagsToggle[ 1 ] = Resources.Tag;
 			
 			//GUILayout.Label( "", Resources.TextLineStyle, GUILayout.Height( 1 ) );
-			GUILayout.Space( 30.0f );
+			Spacer();
 			
 			// Node properties //
 			
@@ -332,7 +339,8 @@ namespace PathLibrary
 								newVector3 = EditorGUILayout.Vector3Field( "Position", ( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position );
 								if( ( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position != newVector3 )
 								{
-									 Editor.Instance.SaveCollection();
+									( Editor.Instance.SelectedNode[ 0 ] as WaypointAsset ).Position = newVector3;
+									Editor.Instance.SaveCollection();
 								}
 					
 								/*
@@ -625,7 +633,7 @@ namespace PathLibrary
 			sharedTags = Resources.SharedTags( Editor.Instance.SelectedNode );
 			
 			GUILayout.BeginHorizontal( /*"Toolbar"*/ );
-				GUILayout.Space( 30.0f );
+				Spacer();
 				//GUILayout.Label( "Tags" );
 		
 				//GUILayout.FlexibleSpace();
@@ -684,7 +692,7 @@ namespace PathLibrary
 			// Node tags list //
 
 			GUILayout.BeginHorizontal();
-				GUILayout.Space( 30.0f );
+				Spacer();
 				GUILayout.BeginVertical();
 	
 					if( Editor.Instance.SelectedNode.Count == 1 )
@@ -725,7 +733,7 @@ namespace PathLibrary
 			
 			tagsToggle[ 1 ] = Resources.Tag;
 			
-			GUILayout.Space( 30.0f );
+			Spacer();
 			
 			GUILayout.BeginHorizontal();
 				GUILayout.Space( 15.0f );
@@ -867,7 +875,7 @@ namespace PathLibrary
 			string addedTag;
 			
 			GUILayout.BeginHorizontal();
-				GUILayout.Space( 30.0f );
+				Spacer();
 				
 				addedTag = Resources.PulldownPopup( "Add tag", new ArrayList( Editor.Instance.Collection.Tags ), "No tags in collection" ) as string;
 				if( addedTag != null )
@@ -886,7 +894,7 @@ namespace PathLibrary
 			GUILayout.EndHorizontal();
 	
 			GUILayout.BeginHorizontal();
-				GUILayout.Space( 30.0f );
+				Spacer();
 				GUILayout.BeginVertical();
 					if( taggedAsset.Tags.Length == 0 )
 					{
