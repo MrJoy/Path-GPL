@@ -1,1 +1,5 @@
 *.mdb
+*.userprefs
+*.pidb
+UnityEngine.dll
+UnityEditor.dll

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3F07711E-6A70-4E65-B557-53616A22444A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Path</RootNamespace>
+    <AssemblyName>Path</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Source\Assets.cs" />
+    <Compile Include="Source\Browser.cs" />
+    <Compile Include="Source\CellAsset.cs" />
+    <Compile Include="Source\ConnectionAsset.cs" />
+    <Compile Include="Source\Control.cs" />
+    <Compile Include="Source\Editor.cs" />
+    <Compile Include="Source\GridNetworkAsset.cs" />
+    <Compile Include="Source\GridNodeAsset.cs" />
+    <Compile Include="Source\Inspector.cs" />
+    <Compile Include="Source\NavmeshAsset.cs" />
+    <Compile Include="Source\NetworkAsset.cs" />
+    <Compile Include="Source\NetworkNodeAsset.cs" />
+    <Compile Include="Source\Resources.cs" />
+    <Compile Include="Source\Seeker.cs" />
+    <Compile Include="Source\TriangleAsset.cs" />
+    <Compile Include="Source\WaypointAsset.cs" />
+    <Compile Include="Source\WaypointNetworkAsset.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Applications\Unity_2.6.1\Unity.app\Contents\Frameworks\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Applications\Unity_2.6.1\Unity.app\Contents\Frameworks\UnityEditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties InternalTargetFrameworkVersion="3.0">
+        <Deployment.LinuxDeployData generateScript="false" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
