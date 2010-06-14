@@ -3,3 +3,5 @@
 *.pidb
 UnityEngine.dll
 UnityEditor.dll
+bin/
+obj/
