@@ -583,7 +583,7 @@ namespace PathLibrary
 				return new Bounds( SelectedNetwork.Position + transform.position, SelectedNetwork.Size /2.0f );
 			}
 
-			return new Bounds( SceneView.current.pivot, Vector3.zero );
+			return new Bounds( SceneView.lastActiveSceneView.pivot, Vector3.zero );
 		}
 
 
