@@ -113,7 +113,7 @@ public class PathComponentEditor : UnityEditor.Editor, IInspector
 			return PathLibrary.Editor.Instance.OnGetFrameBounds( control.transform );
 		}
 		
-		return new Bounds( SceneView.current.pivot, Vector3.zero );
+		return new Bounds( SceneView.lastActiveSceneView.pivot, Vector3.zero );
 	}
 	
 	

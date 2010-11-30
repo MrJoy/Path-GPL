@@ -128,7 +128,7 @@ public class PathEditor : ScriptableObject, IEditorWindow
 			EditorUtility.SetDirty( control );
 		}
 		
-		if( SceneView.current != null )
+		if( SceneView.lastActiveSceneView != null )
 		{
 			SceneView.RepaintAll();
 		}
